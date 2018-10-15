@@ -71,8 +71,10 @@ class ControlPropertiesContainer extends Component {
   }
 
   displayPropertyEditor() {
+    console.log('props', this.props);
     const { selectedControl, selectedControl: { id, concept } } = this.props;
-    if (concept) {
+    console.log('display editor', selectedControl);
+    if (concept || selectedControl.type === 'section') {
       return (
         <PropertyEditor
           metadata={selectedControl}
@@ -85,10 +87,11 @@ class ControlPropertiesContainer extends Component {
 
   displayControlPropertyDetails() {
     const { selectedControl } = this.props;
+    const shouldShowAutoComplete = selectedControl && selectedControl.type !== 'section';
     if (selectedControl) {
       return (
         <div className="obs-control-wrap">
-          {this.displayAutoComplete()}
+          {shouldShowAutoComplete && this.displayAutoComplete()}
           <div>Control ID<span className="control-id">{selectedControl.id}</span></div>
           {this.displayPropertyEditor()}
         </div>

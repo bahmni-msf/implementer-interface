@@ -36,6 +36,7 @@ class ControlWrapper extends Draggable {
   }
 
   onSelected(event, metadata) {
+    console.log('onSelct is calling', metadata);
     this.props.dispatch(selectControl(metadata));
     event.stopPropagation();
   }
@@ -66,10 +67,14 @@ class ControlWrapper extends Draggable {
 
   updateProperties(newProps) {
     const controlProperty = newProps.controlProperty;
-    if (controlProperty && this.metadata.id === controlProperty.id) {
+    if (controlProperty && this.metadata.id === controlProperty.id && !this.state.active) {
+      console.log('updateProperties',this.childControl);
       const childMetadata = this.childControl.getJsonDefinition();
+      console.log(childMetadata,'childmetadata');
       const childProperties = childMetadata.properties;
       const updatedProperties = Object.assign({}, childProperties, controlProperty.property);
+      console.log(JSON.stringify(this.metadata.properties),'this.metadata.properties')
+      console.log(JSON.stringify(updatedProperties),'updated')
       if (!isEqual(this.metadata.properties, updatedProperties)) {
         this.metadata = Object.assign({}, this.metadata, { properties: updatedProperties });
         this.props.dispatch(selectControl(this.metadata));
@@ -93,8 +98,10 @@ class ControlWrapper extends Draggable {
   }
 
   getJsonDefinition(isBeingMoved) {
+    console.log('child control', this.childControl);
     if (this.childControl) {
       const jsonDefinition = this.childControl.getJsonDefinition();
+      console.log('jsonDefinition', jsonDefinition);
       if (jsonDefinition === undefined && !isBeingMoved) {
         const conceptMissingMessage = formBuilderConstants.exceptionMessages.conceptMissing;
         throw new Exception(conceptMissingMessage);
@@ -106,6 +113,7 @@ class ControlWrapper extends Draggable {
   }
 
   processDragStart() {
+    console.log('process drag start', this.childControl);
     const metadata = this.getJsonDefinition(true);
     return metadata || this.props.metadata;
   }
@@ -117,6 +125,7 @@ class ControlWrapper extends Draggable {
   }
 
   onFocus(event) {
+    console.log('onfocus', this.metadata.id)
     this.props.dispatch(focusControl(this.metadata.id));
     event.stopPropagation();
   }
