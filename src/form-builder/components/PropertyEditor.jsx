@@ -12,7 +12,9 @@ export class PropertyEditor extends Component {
   /* eslint-disable no-param-reassign */
   getProperties(attributes) {
     const { metadata: { id, properties, unsupportedProperties } } = this.props;
-    attributes = attributes.filter(attribute => !unsupportedProperties.includes(attribute.name));
+    if (unsupportedProperties) {
+      attributes = attributes.filter(attribute => !unsupportedProperties.includes(attribute.name));
+    }
     const sortedAttributes = sortBy(attributes, (a) => a.elementName !== undefined);
     return sortedAttributes.map((attribute, index) => {
       const { name } = attribute;
