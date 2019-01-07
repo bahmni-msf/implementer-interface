@@ -7,7 +7,7 @@ const NotificationContainer = (props) => {
   if (type && message) {
     return (
       <div className="notification">
-        <div className={ notificationType }>
+        <div className={notificationType}>
           <div className="message">{ message }</div>
         </div>
       </div>);
