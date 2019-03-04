@@ -31,3 +31,7 @@ export const removeLocaleTranslation =
   (locale) => ({ type: 'REMOVE_LOCALE_TRANSLATIONS', locale });
 
 export const clearTranslations = () => ({ type: 'CLEAR_TRANSLATIONS' });
+
+export const storeDragSource = (control) =>( { type: 'DRAG_SOURCE', dragSource: control });
+
+export const updateControlDroppedStatus = (status) => (status ? {type:'DROP_SUCCESSFUL'} : {type : 'DROP_UNSUCESSFUL'})

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import each from 'lodash/each';
 import { connect } from 'react-redux';
-import { blurControl, deselectControl } from 'form-builder/actions/control';
+import { blurControl, deselectControl, updateControlDroppedStatus } from 'form-builder/actions/control';
 import ControlWrapper from 'form-builder/components/ControlReduxWrapper.jsx';
 import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -82,6 +82,7 @@ class Canvas extends Component {
           idGenerator={ this.props.idGenerator }
           ref={ this.gridReference }
           setError={this.props.setError}
+          updateControlDroppedStatus={(status) => this.props.dispatch(updateControlDroppedStatus(status))}
           showDeleteButton
           wrapper={ ControlWrapper }
         />
