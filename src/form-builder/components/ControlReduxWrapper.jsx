@@ -120,6 +120,7 @@ class ControlWrapper extends Draggable {
 
   onFocus(event) {
     this.props.dispatch(focusControl(this.metadata.id));
+    this.props.dispatch(updateControlDroppedStatus(false))
     event.stopPropagation();
   }
 

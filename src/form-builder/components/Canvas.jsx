@@ -83,12 +83,19 @@ class Canvas extends Component {
           ref={ this.gridReference }
           setError={this.props.setError}
           updateControlDroppedStatus={(status) => this.props.dispatch(updateControlDroppedStatus(status))}
+          isControlDropped={this.props.isControlDropped}
           showDeleteButton
           wrapper={ ControlWrapper }
         />
       </div>
     );
   }
+}
+
+function mapStateToProps(state) {
+  return {
+    isControlDropped: state.controlDetails.isControlDropped
+  };
 }
 
 Canvas.propTypes = {
