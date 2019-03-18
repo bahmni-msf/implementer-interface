@@ -14,9 +14,10 @@ class Canvas extends Component {
     this.components = {};
     this.clearSelectedControl = this.clearSelectedControl.bind(this);
     this.state = { descriptors: this.getComponentDescriptors(props.formResourceControls),
-      formName: props.formName };
+      formName: props.formName, isBeingDragged:false };
     this.gridReference = this.gridReference.bind(this);
     this.gridRef = undefined;
+    this.handleControlDrop= this.handleControlDrop.bind(this);
   }
 
   getComponentDescriptors(formResourceControls) {
@@ -61,6 +62,21 @@ class Canvas extends Component {
     }
   }
 
+  handleControlDrop(metadata, cellMetadata, successCallback, dropCell){
+    console.log('called handleControlDrop', metadata, cellMetadata)
+    if(!this.dragAndDropLocationIsSame(this.props.dragSourceCell, dropCell) && cellMetadata.length === 0){
+      this.props.dragSourceCell.processMove && this.props.dragSourceCell.processMove(metadata)
+      successCallback(metadata);
+    }
+    else{
+      this.props.dragSourceCell.updateMetadata(metadata)
+    }
+  }
+
+  dragAndDropLocationIsSame(dragCell, dropCell){
+    return dragCell === dropCell
+  }
+
   render() {
     const { formResourceControls } = this.props;
     return (
@@ -84,6 +100,9 @@ class Canvas extends Component {
           setError={this.props.setError}
           showDeleteButton
           wrapper={ ControlWrapper }
+          dragSourceCell={this.props.dragSourceCell}
+          onControlDrop={this.handleControlDrop}
+          isBeingDragged= {this.state.isBeingDragged}
         />
       </div>
     );
@@ -102,5 +121,9 @@ Canvas.propTypes = {
   updateFormName: PropTypes.func,
   validateNameLength: PropTypes.func,
 };
-
-export default connect(null, null, null, { withRef: true })(Canvas);
+function mapStateToProps(state) {
+  return {
+    dragSourceCell : state.controlDetails.dragSourceCell
+  };
+}
+export default connect(mapStateToProps, null, null, { withRef: true })(Canvas);

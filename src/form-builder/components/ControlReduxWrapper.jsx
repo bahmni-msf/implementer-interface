@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { focusControl, selectControl } from 'form-builder/actions/control';
+import { focusControl, selectControl, dragSourceUpdate } from 'form-builder/actions/control';
 import { blurControl, deselectControl, eventsChanged } from 'form-builder/actions/control';
 import { Draggable } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
@@ -24,7 +24,8 @@ class ControlWrapper extends Draggable {
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
-    this.state = { active: false, showDeleteModal: false };
+    let isBeingDragged = props.parentRef ? props.parentRef.props.isBeingDragged : false;
+    this.state = { active: false, showDeleteModal: false, isBeingDragged: isBeingDragged };
     this.storeChildRef = this.storeChildRef.bind(this);
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
@@ -33,6 +34,8 @@ class ControlWrapper extends Draggable {
     this.clearControlProperties = this.clearControlProperties.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
     this.closeDeleteModal = this.closeDeleteModal.bind(this);
+    this.handleDragStart = this.handleDragStart.bind(this);
+    this.handleControlDrop= this.handleControlDrop.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -48,6 +51,9 @@ class ControlWrapper extends Draggable {
 
   componentWillReceiveProps(nextProps) {
     const activeControl = (this.metadata.id === nextProps.focusedControl);
+    if(!activeControl && nextProps.parentRef){
+      this.setState({isBeingDragged : nextProps.parentRef.props.isBeingDragged})
+    }
     this.setState({ active: activeControl });
   }
 
@@ -87,10 +93,12 @@ class ControlWrapper extends Draggable {
   componentWillUpdate(newProps) {
     this.conditionallyAddConcept(newProps);
     this.updateProperties(newProps);
-    if (this.metadata.id !== newProps.metadata.id) {
+    console.log('componentWillUpdate called', 'old metadata: ', this.metadata, 'new props:', newProps.metadata)
+  if (this.metadata.id !== newProps.metadata.id || this.metadata.controls !== newProps.metadata.controls) {
+      console.log('updating metdata');
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
       this.control = ComponentStore.getDesignerComponent(this.metadata.type).control;
-    }
+   }
   }
 
   getJsonDefinition(isBeingMoved) {
@@ -190,16 +198,38 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
+  handleDragStart(e, onDragStart){
+    console.log('handle drag start 123');
+    this.setState({isBeingDragged : true})
+    this.props.dispatch(dragSourceUpdate(this.props.parentRef))
+    onDragStart(e);
+  }
+
+  dragAndDropLocationIsSame(dragCell, dropCell){
+   return dragCell === dropCell
+  }
+
+  handleControlDrop(metadata, cellMetadata, successCallback, dropCell){
+    console.log('called handleControlDrop', metadata, cellMetadata)
+    if(!this.dragAndDropLocationIsSame(this.props.dragSourceCell, dropCell) && cellMetadata.length === 0){
+      this.props.dragSourceCell.processMove && this.props.dragSourceCell.processMove(metadata)
+      successCallback(metadata);
+    }else{
+      this.props.dragSourceCell.updateMetadata(metadata)
+    }
+    
+  }
+
   render() {
     const onDragEndFunc = this.onDragEnd(this.metadata);
+    const onDragStart = this.onDragStart(this.metadata);
     return (
       <div
         className={
           classNames('control-wrapper', { 'control-selected': this.state.active }, 'clearfix')
         }
         draggable="true"
-        onDragEnd={ (e) => onDragEndFunc(e) }
-        onDragStart={ this.onDragStart(this.metadata) }
+        onDragStart={ (e) => this.handleDragStart(e, onDragStart)}
         onFocus={(e) => this.onFocus(e)}
         tabIndex="1"
       >
@@ -214,6 +244,9 @@ class ControlWrapper extends Draggable {
           setError={this.props.setError}
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
+          dragSourceCell= {this.props.dragSourceCell}
+          onControlDrop={this.handleControlDrop}
+          isBeingDragged= {this.state.isBeingDragged}
         />
         { this.showDeleteControlModal() }
         { this.showScriptEditorDialog() }
@@ -244,6 +277,7 @@ function mapStateToProps(state) {
     formDetails: state.formDetails,
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
+    dragSourceCell : state.controlDetails.dragSourceCell
   };
 }
 

@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-const controlDetails = (store = {}, action) => {
+const controlDetails = (store = {dragSourceCell :[]}, action) => {
   switch (action.type) {
     case 'SELECT_CONTROL':
       return Object.assign({}, store, { selectedControl: action.metadata });
@@ -13,6 +13,9 @@ const controlDetails = (store = {}, action) => {
       // eslint-disable-next-line
       store.selectedControl.events = { onValueChange: action.source };
       return cloneDeep(store);
+    case 'DRAG_SOURCE_CHANGED':
+      return Object.assign({}, store, { dragSourceCell: action.cell });
+      
     default:
       return store;
   }
