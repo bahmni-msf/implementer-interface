@@ -60,7 +60,6 @@ describe('ControlWrapper', () => {
       />);
 
     expect(controlWrapper.find('.control-wrapper')).to.have.prop('onDragStart');
-    expect(controlWrapper.find('.control-wrapper')).to.have.prop('onDragEnd');
     expect(controlWrapper.find('.control-wrapper').children()).to.have.prop('onSelect');
   });
 
