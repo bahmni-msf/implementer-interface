@@ -15,6 +15,7 @@ import isEqual from 'lodash/isEqual';
 import classNames from 'classnames';
 import DeleteControlModal from 'form-builder/components/DeleteControlModal.jsx';
 import ScriptEditorModal from './ScriptEditorModal';
+import DragDropHelper from '../helpers/dragDropHelper.js';
 
 class ControlWrapper extends Draggable {
   constructor(props) {
@@ -24,8 +25,8 @@ class ControlWrapper extends Draggable {
     this.metadata = Object.assign({}, props.metadata);
     this.onSelected = this.onSelected.bind(this);
     this.childControl = undefined;
-    let isBeingDragged = props.parentRef ? props.parentRef.props.isBeingDragged : false;
-    this.state = { active: false, showDeleteModal: false, isBeingDragged: isBeingDragged };
+    const isBeingDragged = props.parentRef ? props.parentRef.props.isBeingDragged : false;
+    this.state = { active: false, showDeleteModal: false, isBeingDragged };
     this.storeChildRef = this.storeChildRef.bind(this);
     this.getJsonDefinition = this.getJsonDefinition.bind(this);
     this.processDragStart = this.processDragStart.bind(this);
@@ -35,7 +36,7 @@ class ControlWrapper extends Draggable {
     this.confirmDelete = this.confirmDelete.bind(this);
     this.closeDeleteModal = this.closeDeleteModal.bind(this);
     this.handleDragStart = this.handleDragStart.bind(this);
-    this.handleControlDrop= this.handleControlDrop.bind(this);
+    this.handleControlDrop = this.handleControlDrop.bind(this);
   }
 
   onSelected(event, metadata) {
@@ -51,8 +52,8 @@ class ControlWrapper extends Draggable {
 
   componentWillReceiveProps(nextProps) {
     const activeControl = (this.metadata.id === nextProps.focusedControl);
-    if(!activeControl && nextProps.parentRef){
-      this.setState({isBeingDragged : nextProps.parentRef.props.isBeingDragged})
+    if (!activeControl && nextProps.parentRef) {
+      this.setState({ isBeingDragged: nextProps.parentRef.props.isBeingDragged });
     }
     this.setState({ active: activeControl });
   }
@@ -93,12 +94,11 @@ class ControlWrapper extends Draggable {
   componentWillUpdate(newProps) {
     this.conditionallyAddConcept(newProps);
     this.updateProperties(newProps);
-    console.log('componentWillUpdate called', 'old metadata: ', this.metadata, 'new props:', newProps.metadata)
-  if (this.metadata.id !== newProps.metadata.id || this.metadata.controls !== newProps.metadata.controls) {
-      console.log('updating metdata');
+    if (this.metadata.id !== newProps.metadata.id
+        || this.metadata.controls !== newProps.metadata.controls) {
       this.metadata = Object.assign({}, this.metadata, newProps.metadata);
       this.control = ComponentStore.getDesignerComponent(this.metadata.type).control;
-   }
+    }
   }
 
   getJsonDefinition(isBeingMoved) {
@@ -198,37 +198,27 @@ class ControlWrapper extends Draggable {
     return null;
   }
 
-  handleDragStart(e, onDragStart){
-    console.log('handle drag start 123');
-    this.setState({isBeingDragged : true})
-    this.props.dispatch(dragSourceUpdate(this.props.parentRef))
+  handleDragStart(e, onDragStart) {
+    this.setState({ isBeingDragged: true });
+    this.props.dispatch(dragSourceUpdate(this.props.parentRef));
     onDragStart(e);
   }
 
-  dragAndDropLocationIsSame(dragCell, dropCell){
-   return dragCell === dropCell
-  }
-
-  handleControlDrop(metadata, cellMetadata, successCallback, dropCell){
-    console.log('called handleControlDrop', metadata, cellMetadata)
-    if(!this.dragAndDropLocationIsSame(this.props.dragSourceCell, dropCell) && cellMetadata.length === 0){
-      this.props.dragSourceCell.processMove && this.props.dragSourceCell.processMove(metadata)
-      successCallback(metadata);
-    }else{
-      this.props.dragSourceCell.updateMetadata(metadata)
-    }
-    
+  handleControlDrop({ metadata, successCallback, dropCell }) {
+    DragDropHelper.processControlDrop({ dragSourceCell: this.props.dragSourceCell,
+      successfulDropCallback: successCallback, dropCell, metadata });
   }
 
   render() {
-    const onDragEndFunc = this.onDragEnd(this.metadata);
     const onDragStart = this.onDragStart(this.metadata);
+    const draggable = this.props.dragAllowed !== undefined ?
+      this.props.dragAllowed.toString() : true;
     return (
       <div
         className={
           classNames('control-wrapper', { 'control-selected': this.state.active }, 'clearfix')
         }
-        draggable="true"
+        draggable={draggable}
         onDragStart={ (e) => this.handleDragStart(e, onDragStart)}
         onFocus={(e) => this.onFocus(e)}
         tabIndex="1"
@@ -237,16 +227,17 @@ class ControlWrapper extends Draggable {
           clearSelectedControl={ this.clearSelectedControl}
           deleteControl={ this.confirmDelete }
           dispatch={this.clearControlProperties}
+          dragSourceCell= {this.props.dragSourceCell}
           idGenerator={ this.props.idGenerator}
+          isBeingDragged= {this.state.isBeingDragged}
           metadata={ this.metadata }
+          onControlDrop={this.handleControlDrop}
           onSelect={ this.onSelected }
           ref={ this.storeChildRef }
           setError={this.props.setError}
           showDeleteButton={ this.props.showDeleteButton && this.state.active }
           wrapper={ this.props.wrapper }
-          dragSourceCell= {this.props.dragSourceCell}
-          onControlDrop={this.handleControlDrop}
-          isBeingDragged= {this.state.isBeingDragged}
+
         />
         { this.showDeleteControlModal() }
         { this.showScriptEditorDialog() }
@@ -261,6 +252,7 @@ ControlWrapper.propTypes = {
     property: PropTypes.object,
   }),
   deleteControl: PropTypes.func,
+  dragSourceCell: PropTypes.object,
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
@@ -277,7 +269,7 @@ function mapStateToProps(state) {
     formDetails: state.formDetails,
     focusedControl: state.controlDetails.focusedControl,
     selectedControl: state.controlDetails.selectedControl,
-    dragSourceCell : state.controlDetails.dragSourceCell
+    dragSourceCell: state.controlDetails.dragSourceCell,
   };
 }
 
