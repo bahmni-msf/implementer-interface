@@ -92,13 +92,13 @@ class ControlWrapper extends Draggable {
   }
 
   componentWillUpdate(newProps) {
-    this.conditionallyAddConcept(newProps);
-    this.updateProperties(newProps);
     if (this.metadata.id !== newProps.metadata.id
-        || this.metadata.controls !== newProps.metadata.controls) {
-      this.metadata = Object.assign({}, this.metadata, newProps.metadata);
+      || this.metadata.controls !== newProps.metadata.controls) {
+      this.metadata = Object.assign({}, this.metadata, { controls: newProps.metadata.controls });
       this.control = ComponentStore.getDesignerComponent(this.metadata.type).control;
     }
+    this.conditionallyAddConcept(newProps);
+    this.updateProperties(newProps);
   }
 
   getJsonDefinition(isBeingMoved) {
