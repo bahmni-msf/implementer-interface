@@ -9,6 +9,13 @@ export const formBuilderConstants = {
     conceptMissing: 'Please associate Concept to Obs',
     emptySectionOrTable: 'Section/Table is empty',
   },
+  dialogueMessages: {
+    saveChangesMessage: {
+      message: 'You have unsaved changes. Please choose an action',
+      leavePage: 'Don\'t save',
+      continueEditing: 'Stay on page',
+    },
+  },
   // eslint-disable-next-line
   bahmniFormResourceUrl: '/openmrs/ws/rest/v1/bahmniie/form/save',
   formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
