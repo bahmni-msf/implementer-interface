@@ -20,6 +20,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import { clearTranslations, eventsChanged } from '../actions/control';
 import { Exception } from 'form-builder/helpers/Exception';
+import SaveChangesModal from 'form-builder/components/SaveChangesModal.jsx';
 
 
 export class FormDetailContainer extends Component {
@@ -29,7 +30,8 @@ export class FormDetailContainer extends Component {
     this.timeoutId = undefined;
     this.state = { formData: undefined, showModal: false, notification: {},
       httpReceived: false, loading: true, formList: [],
-      originalFormName: undefined, formEvents: {} };
+      originalFormName: undefined, formEvents: {},
+      showSaveChangesModal: false, clickEvent: undefined };
     this.setState = this.setState.bind(this);
     this.setErrorMessage = this.setErrorMessage.bind(this);
     this.onSave = this.onSave.bind(this);
@@ -37,6 +39,9 @@ export class FormDetailContainer extends Component {
     this.closeFormModal = this.closeFormModal.bind(this);
     this.onPublish = this.onPublish.bind(this);
     this.cloneFormResource = this.cloneFormResource.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.leavePage = this.leavePage.bind(this);
+    this.formHasChanges = this.formHasChanges.bind(this);
     props.dispatch(deselectControl());
     props.dispatch(removeSourceMap());
     props.dispatch(removeControlProperties());
@@ -45,6 +50,10 @@ export class FormDetailContainer extends Component {
   }
 
   componentDidMount() {
+    const selectors = document.querySelectorAll('.breadcrumbs, .header a');
+    for (let i = 0; i < selectors.length; i++) {
+      selectors[i].addEventListener('mousedown', this.handleClick);
+    }
     const params =
             'v=custom:(id,uuid,name,version,published,auditInfo,' +
             'resources:(value,dataType,uuid))';
@@ -54,6 +63,7 @@ export class FormDetailContainer extends Component {
               this.setState({ formData: data, httpReceived: true,
                 loading: false, originalFormName: data.name });
               this.getFormJson();
+              this.referenceJson = this.getFormJson();
             })
             .catch((error) => {
               this.setErrorMessage(error);
@@ -104,6 +114,7 @@ export class FormDetailContainer extends Component {
         uuid: formResourceUuid,
       };
       this._saveFormResource(formResource);
+      this.referenceJson = formJson;
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -160,6 +171,11 @@ export class FormDetailContainer extends Component {
               this.setState({ formList: response.results });
             })
             .catch((error) => this.showErrors(error));
+  }
+
+  leavePage() {
+    this.state.clickEvent.target.click();
+    return true;
   }
 
   hasEmptyBlocks(formJson) {
@@ -380,6 +396,44 @@ export class FormDetailContainer extends Component {
             .catch((error) => this.showErrors(error));
   }
 
+  showSaveChangesModal() {
+    if (this.state.showSaveChangesModal) {
+      return (<SaveChangesModal
+        closeSaveChangesModal={() => this.closeSaveChangesModal()}
+        event={this.state.clickEvent}
+        leavePage={() => this.leavePage()}
+        showSaveChangesModal={this.state.showSaveChangesModal}
+      />);
+    }
+    return null;
+  }
+
+  closeSaveChangesModal() {
+    this.setState({ showSaveChangesModal: false, clickEvent: undefined });
+    return;
+  }
+
+  handleClick(event) {
+    // Mouse, left button click action
+    if (event.which === 1 && event.target.tagName.toLocaleLowerCase() !== 'span') {
+      if (this.formHasChanges()) {
+        this.setState({ clickEvent: event });
+        event.preventDefault();
+        this.setState({ showSaveChangesModal: true });
+      } else {
+        event.target.click();
+      }
+    } else {
+      return true;
+    }
+    return false;
+  }
+
+  formHasChanges() {
+    return !(isEqual(this.referenceJson.controls, this.getFormJson().controls)
+            && isEqual(this.referenceJson.name, this.getFormJson().name));
+  }
+
   render() {
     const defaultLocale = this.props.defaultLocale || localStorage.getItem('openmrsDefaultLocale');
     return (
@@ -399,6 +453,9 @@ export class FormDetailContainer extends Component {
                       {this.showPublishButton()}
                   </div>
                 </div>
+              </div>
+              <div>
+                  {this.showSaveChangesModal()}
               </div>
               <div className="container-content-wrap">
                 <div className="container-content">

@@ -766,4 +766,136 @@ describe('FormDetailContainer', () => {
       expect(notificationContainer.prop('notification').message).to.equal('Section/Table is empty');
     });
   });
+
+  describe('when there are unsaved changes', () => {
+    beforeEach(() => {
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(publishedFormData));
+    });
+
+    afterEach(() => {
+      httpInterceptor.get.restore();
+    });
+
+    it('should have saveChangesModal when showSaveChangesModal state set to true', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      wrapper.setState({ showSaveChangesModal: true });
+
+      expect(wrapper.find('SaveChangesModal').html()).not.to.equal(null);
+    });
+
+    it('should return FALSE when there are no changes in the form', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      const formJsonData = {
+        name: 'SectionForm',
+        controls: [{
+          type: 'section',
+          controls: [],
+        }],
+      };
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+      wrapper.instance().referenceJson = {
+        name: 'SectionForm',
+        controls: [{
+          type: 'section',
+          controls: [],
+        }],
+      };
+
+      expect(wrapper.instance().formHasChanges()).to.equal(false);
+    });
+
+    it('should return TRUE when   there are changes in the form', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+      const formJsonData = {
+        name: 'SectionForm',
+        controls: [{
+          type: 'section',
+          controls: [],
+        }],
+      };
+      sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJsonData);
+
+      wrapper.instance().referenceJson = {
+        name: 'SectionForm',
+        controls: [{
+          type: 'section',
+          controls: [{ key: 1 }],
+        }],
+      };
+
+      expect(wrapper.instance().formHasChanges()).to.equal(true);
+    });
+
+    it('should change state variables showSaveChangesModal, clickEvent ', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      wrapper.instance().closeSaveChangesModal();
+
+      expect(wrapper.instance().state.showSaveChangesModal).to.equal(false);
+      expect(wrapper.instance().state.clickEvent).to.equal(undefined);
+    });
+
+    it('should change state variables on page navigation ' +
+        'action with unsaved changes in the form', () => {
+      const wrapper = mount(
+        <FormDetailContainer
+          {...defaultProps}
+        />, { context }
+      );
+
+      const event = {
+        which: 1,
+        target: {
+          tagName: 'test',
+        },
+        preventDefault() {
+          return;
+        },
+      };
+
+      sinon.stub(wrapper.instance(), 'formHasChanges').callsFake(() => true);
+
+      wrapper.instance().handleClick(event);
+
+      expect(wrapper.instance().state.clickEvent).to.equal(event);
+      expect(wrapper.instance().state.showSaveChangesModal).to.equal(true);
+    });
+
+    it('should not perform state changes when mouse event is not for selection', () => {
+      const wrapper = mount(
+            <FormDetailContainer
+              {...defaultProps}
+            />, { context }
+        );
+
+      const event = {
+        which: 3,
+        target: {
+          tagName: 'test',
+        },
+        preventDefault() {
+          return;
+        },
+      };
+      expect(wrapper.instance().handleClick(event)).to.equal(true);
+    });
+  });
 });
