@@ -8,6 +8,7 @@ import { GridDesigner as Grid } from 'bahmni-form-controls';
 import { ComponentStore } from 'bahmni-form-controls';
 import TitleDetail from './TitleDetail';
 import DragDropHelper from '../helpers/dragDropHelper.js';
+import { dragSourceUpdate } from '../actions/control';
 
 class Canvas extends Component {
   constructor(props) {
@@ -66,6 +67,7 @@ class Canvas extends Component {
   handleControlDrop({ metadata, successCallback, dropCell }) {
     DragDropHelper.processControlDrop({ dragSourceCell: this.props.dragSourceCell,
       successfulDropCallback: successCallback, dropCell, metadata });
+    this.props.dispatch(dragSourceUpdate(undefined));
   }
 
   dragAndDropLocationIsSame(dragCell, dropCell) {

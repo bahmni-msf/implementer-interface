@@ -208,6 +208,7 @@ class ControlWrapper extends Draggable {
   handleControlDrop({ metadata, successCallback, dropCell }) {
     DragDropHelper.processControlDrop({ dragSourceCell: this.props.dragSourceCell,
       successfulDropCallback: successCallback, dropCell, metadata });
+    this.props.dispatch(dragSourceUpdate(undefined));
   }
 
   render() {
