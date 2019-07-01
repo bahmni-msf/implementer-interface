@@ -9,14 +9,19 @@ import { formBuilderConstants } from 'form-builder/constants';
 import formHelper from '../helpers/formHelper';
 import jsonpath from 'jsonpath/jsonpath';
 import find from 'lodash/find';
+import  JSZip  from 'jszip';
+import { saveAs } from 'file-saver';
+import {commonConstants} from "../../common/constants";
+import NotificationContainer from 'common/Notification';
 
 
 export default class FormBuilder extends Component {
 
   constructor() {
     super();
-    this.state = { showModal: false };
+    this.state = { showModal: false , selectedForms: [], notification: {}};
     this.setState = this.setState.bind(this);
+    this.checkboxSelected = this.checkboxSelected.bind(this);
     this.validationErrors = [];
   }
 
@@ -188,10 +193,68 @@ export default class FormBuilder extends Component {
     return Promise.all(checkPromises);
   }
 
+  setMessage(messageText, type) {
+    const notification = { message: messageText, type };
+    this.setState({ notification });
+    setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
+  }
+
+  validateExport(formUuids){
+    if (formUuids.length === 0) {
+      return true;
+    }
+    if(formUuids.length > 20){
+      this.setMessage(formBuilderConstants.exceptionMessages.exportFormsLimit, commonConstants.responseType.error);
+      return true;
+    }
+    return false;
+  }
+
+  checkboxSelected(form) {
+    if(!this.state.selectedForms.includes(form.uuid)){
+      this.state.selectedForms.push(form.uuid);
+    } else {
+      _.remove(this.state.selectedForms, function (item){
+        return item === form.uuid;
+      });
+    }
+  }
+
+  exportFiles() {
+    if(this.validateExport(this.state.selectedForms)){
+        return;
+    }
+    const zip = new JSZip();
+    let fileName;
+    httpInterceptor.get(`${formBuilderConstants.exportUrl}?uuids=${this.state.selectedForms}`)
+      .then((exportResponse) => {
+        if (exportResponse.errorFormList.length > 0) {
+          this.setMessage('Export Failed for ' + exportResponse.errorFormList.toString() +
+            + "\nPlease verify logs for details", commonConstants.responseType.error);
+        }
+        const formData = exportResponse.bahmniFormDataList;
+        formData.forEach(form => {
+          fileName = `${form.bahmniForm.name}_${form.bahmniForm.version}`;
+          zip.file(`${fileName}.json`, JSON.stringify(form));
+        });
+        if (formData.length > 0) {
+          zip.generateAsync({type: 'blob'}).then(function (content) {
+            saveAs(content, "Export.zip");
+          });
+        }
+    })
+    .catch(() => {
+      this.setMessage('Export failed', commonConstants.responseType.error);
+    });
+  }
+
   render() {
     return (
       <div>
         <FormBuilderHeader />
+        <NotificationContainer notification={this.state.notification} />
         <div className="breadcrumb-wrap">
           <div className="breadcrumb-inner">
             <div className="fl">
@@ -211,6 +274,9 @@ export default class FormBuilder extends Component {
                        e.target.value = null;
                 }} type="file"
               /></label></button>
+              <button className="exportBtn" onClick={() => this.exportFiles()}>
+                  Export
+              </button>
           </div>
         </div>
         <CreateFormModal
@@ -222,13 +288,15 @@ export default class FormBuilder extends Component {
           <div className="container-content">
             <div className="container-main form-list">
               <h2 className="header-title">Observation Forms</h2>
-              <FormList data={this.props.data} />
+              <FormList data={this.props.data} checkboxSelected={this.checkboxSelected}/>
             </div>
           </div>
         </div>
       </div>
     );
   }
+
+
 }
 
 FormBuilder.propTypes = {
