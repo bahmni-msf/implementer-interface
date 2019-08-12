@@ -14,7 +14,7 @@ export const formBuilderConstants = {
   formResourceDataType: 'org.bahmni.customdatatype.datatype.FileSystemStorageDatatype',
   formUrl: '/openmrs/ws/rest/v1/form',
   formTranslationUrl: '/openmrs/ws/rest/v1/bahmniie/form/translate',
-  supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime,Complex',
+  supportedObsDataTypes: 'Boolean,Text,Numeric,Coded,Date,DateTime,Complex,Time',
   supportedObsGroupDataTypes: 'N/A',
   defaultLocaleUrl: '/openmrs/ws/rest/v1/bahmnicore/sql/globalproperty?property=default_locale',
   saveTranslationsUrl: '/openmrs/ws/rest/v1/bahmniie/form/saveTranslation',
