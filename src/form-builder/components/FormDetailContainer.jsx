@@ -37,7 +37,6 @@ export class FormDetailContainer extends Component {
   constructor(props) {
     super(props);
     this.timeoutId = undefined;
-    this.formJson = undefined;
     this.state = { formData: undefined, showModal: false, showPreview: false, notification: {},
       httpReceived: false, loading: true, formList: [], formControls: [],
       originalFormName: undefined, formEvents: {}, referenceVersion: undefined,
@@ -73,8 +72,7 @@ export class FormDetailContainer extends Component {
                 loading: false, originalFormName: data.name,
                 referenceVersion: parsedFormValue.referenceVersion,
                 referenceFormUuid: parsedFormValue.referenceFormUuid });
-              this.formJson = this.getFormJson();
-              const formControlsArray = formHelper.getObsControlEvents(this.formJson);
+              const formControlsArray = formHelper.getObsControlEvents(parsedFormValue);
               this.props.dispatch(formLoad(formControlsArray));
             })
             .catch((error) => {
