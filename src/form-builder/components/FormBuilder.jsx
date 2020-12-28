@@ -337,10 +337,7 @@ export default class FormBuilder extends Component {
             value: nameTranslations,
             uuid: '',
           };
-          const translationsWithFormUuid = translations.map((eachTranslation) =>
-            Object.assign({}, eachTranslation, { formUuid: self.getFormUuid(formName) }));
-          self.props.saveFormResource(formResource, translationsWithFormUuid,
-            formNameTranslationsResource);
+          self.props.saveFormResource(formResource, translations, formNameTranslationsResource);
         });
       });
   }
