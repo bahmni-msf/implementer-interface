@@ -111,27 +111,7 @@ export class FormDetailContainer extends Component {
 
   onSave() {
     try {
-      const formJson = this.getFormJson();
-      if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
-        throw new Exception(emptySectionOrTable);
-      }
-      formJson.events = this.state.formEvents;
-      const formName = this.state.formData ? this.state.formData.name : 'FormName';
-      const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
-                this.state.formData.resources[0].uuid : '';
-      formJson.translationsUrl = formBuilderConstants.translationsUrl;
-      formJson.referenceVersion = this.state.referenceVersion;
-      formJson.referenceFormUuid = this.state.referenceFormUuid;
-      const formResource = {
-        form: {
-          name: formName,
-          uuid: formUuid,
-        },
-        value: JSON.stringify(formJson),
-        uuid: formResourceUuid,
-      };
+      const formResource = this.getFormResource();
       this._saveFormResource(formResource);
     } catch (e) {
       this.setErrorMessage(e.getException());
@@ -140,17 +120,22 @@ export class FormDetailContainer extends Component {
 
   onPublish() {
     try {
-      const formJson = this.getFormJson();
-      if (this.hasEmptyBlocks(formJson)) {
-        const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
-        throw new Exception(emptySectionOrTable);
-      }
-      const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-      const { translations } = this.props;
-      const defaultLocale = this.props.defaultLocale ||
-          localStorage.getItem('openmrsDefaultLocale');
-      const defaultTranslations = this._createTranslationReqObject(translations, defaultLocale);
-      this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+      const formJson = this.getFormResource();
+      httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
+          .then((response) => {
+            this.setFormData(response);
+            const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+            const { translations } = this.props;
+            const defaultLocale = this.props.defaultLocale ||
+                localStorage.getItem('openmrsDefaultLocale');
+            const defaultTranslations =
+                this._createTranslationReqObject(translations, defaultLocale);
+            this._saveTranslationsAndPublishForm(formUuid, defaultTranslations);
+          })
+          .catch((error) => {
+            this.setErrorMessage(error);
+            this.setState({ loading: false });
+          });
     } catch (e) {
       this.setErrorMessage(e.getException());
     }
@@ -158,6 +143,24 @@ export class FormDetailContainer extends Component {
 
   onPreview() {
     this.generateFormPreviewJson();
+  }
+
+  setFormData(response) {
+    const updatedUuid = response.form.uuid;
+    this.context.router.history.push(`/form-builder/${updatedUuid}`);
+    const successNotification = {
+      message: commonConstants.saveSuccessMessage,
+      type: commonConstants.responseType.success,
+    };
+    this.setState({
+      notification: successNotification,
+      formData: this._formResourceMapper(response), loading: false,
+    });
+
+    clearTimeout(this.timeoutID);
+    this.timeoutID = setTimeout(() => {
+      this.setState({ notification: {} });
+    }, commonConstants.toastTimeout);
   }
 
   getFormJson() {
@@ -193,6 +196,30 @@ export class FormDetailContainer extends Component {
               this.setState({ formList: response.results });
             })
             .catch((error) => this.showErrors(error));
+  }
+
+  getFormResource() {
+    const formJson = this.getFormJson();
+    if (this.hasEmptyBlocks(formJson)) {
+      const emptySectionOrTable = formBuilderConstants.exceptionMessages.emptySectionOrTable;
+      throw new Exception(emptySectionOrTable);
+    }
+    formJson.events = this.state.formEvents;
+    const formName = this.state.formData ? this.state.formData.name : 'FormName';
+    const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
+    const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
+        this.state.formData.resources[0].uuid : '';
+    formJson.translationsUrl = formBuilderConstants.translationsUrl;
+    formJson.referenceVersion = this.state.referenceVersion;
+    formJson.referenceFormUuid = this.state.referenceFormUuid;
+    return {
+      form: {
+        name: formName,
+        uuid: formUuid,
+      },
+      value: JSON.stringify(formJson),
+      uuid: formResourceUuid,
+    };
   }
 
   hasEmptyBlocks(formJson) {
@@ -339,19 +366,7 @@ export class FormDetailContainer extends Component {
     this.setState({ loading: true });
     httpInterceptor.post(formBuilderConstants.bahmniFormResourceUrl, formJson)
             .then((response) => {
-              const updatedUuid = response.form.uuid;
-              this.context.router.history.push(`/form-builder/${updatedUuid}`);
-              const successNotification = {
-                message: commonConstants.saveSuccessMessage,
-                type: commonConstants.responseType.success,
-              };
-              this.setState({ notification: successNotification,
-                formData: this._formResourceMapper(response), loading: false });
-
-              clearTimeout(this.timeoutID);
-              this.timeoutID = setTimeout(() => {
-                this.setState({ notification: {} });
-              }, commonConstants.toastTimeout);
+              this.setFormData(response);
             })
             .catch((error) => {
               this.setErrorMessage(error);

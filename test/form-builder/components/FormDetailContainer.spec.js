@@ -559,7 +559,7 @@ describe('FormDetailContainer', () => {
     });
 
     it('should save form when save button is clicked', (done) => {
-      sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve(formData));
+      sinon.stub(httpInterceptor, 'post').callsFake(() => Promise.resolve({ form: formData }));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
@@ -649,34 +649,34 @@ describe('FormDetailContainer', () => {
       expect(publishButton).to.have.prop('onClick');
     });
 
-    it('should publish form when the publish button is clicked', (done) => {
+    it('should save and publish form when the publish button is clicked', (done) => {
       const resources = [{
         dataType: formBuilderConstants.formResourceDataType,
         value: '{"controls": [{}]}',
       }];
+      formData.version = '2';
       const updatedForm = Object.assign({}, formData, { resources });
       const postStub = sinon.stub(httpInterceptor, 'post');
-      postStub.onFirstCall().returns(Promise
-        .resolve('[{"display" :"some name to display", "locale": "en"}]'))
-        .onSecondCall().returns(Promise.resolve({}))
-        .onThirdCall(1).returns(Promise.resolve(updatedForm));
+      postStub.onCall(0).returns(Promise.resolve({ form: formData }))
+        .onCall(1).returns(Promise
+          .resolve('[{"display" :"some name to display", "locale": "en"}]'))
+        .onCall(2).returns(Promise.resolve({}))
+          .onCall(3).returns(Promise.resolve(updatedForm));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
-        />, { context }
+        />, { context: { router: { history: { push() {} } } } }
       );
       wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
       let publishButton = undefined;
-      updatedForm.version = '2';
-      wrapper.setState({ formData: updatedForm },
-        () => {
-          publishButton = wrapper.find('.publish-button');
-        });
+      wrapper.setState(() => {
+        publishButton = wrapper.find('.publish-button');
+      });
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledThrice(httpInterceptor.post);
+        sinon.assert.callCount(httpInterceptor.post, 4);
         const formNameTranslations = {
           form: { name: wrapper.state().originalFormName, uuid: 'FID' },
           value: '',
@@ -684,6 +684,7 @@ describe('FormDetailContainer', () => {
         const formNameTranslateSaveUrl = new UrlHelper()
           .bahmniSaveFormNameTranslateUrl('ref-uuid');
         sinon.assert.calledOnce(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
+        sinon.assert.calledOnce(postStub.withArgs(formBuilderConstants.bahmniFormResourceUrl));
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
             [{ formName: 'someFormName', locale: 'en', version: '2', referenceVersion: '1',
@@ -701,16 +702,17 @@ describe('FormDetailContainer', () => {
         dataType: formBuilderConstants.formResourceDataType,
         value: '{"controls": [{}]}',
       }];
+      formData.version = '1';
       const updatedForm = Object.assign({}, formData, { resources });
       const postStub = sinon.stub(httpInterceptor, 'post');
-      postStub.onFirstCall().returns(Promise
-        .resolve('[{"display" :"some name to display", "locale": "en"}]'))
-        .onSecondCall().returns(Promise.resolve({}))
-        .onThirdCall(1).returns(Promise.resolve(updatedForm));
+      postStub.onFirstCall().returns(Promise.resolve({ form: formData }))
+        .onSecondCall().returns(Promise
+          .resolve('[{"display" :"some name to display", "locale": "en"}]'))
+        .onThirdCall(1).returns(Promise.resolve({}));
       const wrapper = shallow(
         <FormDetailContainer
           {...defaultProps}
-        />, { context }
+        />, { context: { router: { history: { push() {} } } } }
       );
       wrapper.setState({ httpReceived: true });
       sinon.stub(wrapper.instance(), 'getFormJson').callsFake(() => formJson);
@@ -722,7 +724,7 @@ describe('FormDetailContainer', () => {
       wrapper.setState({ referenceVersion: '1', referenceFormUuid: 'ref-uuid' });
       publishButton.simulate('click');
       setTimeout(() => {
-        sinon.assert.calledTwice(httpInterceptor.post);
+        sinon.assert.calledThrice(httpInterceptor.post);
         const formNameTranslations = {
           form: { name: wrapper.state().originalFormName, uuid: 'FID' },
           value: '',
