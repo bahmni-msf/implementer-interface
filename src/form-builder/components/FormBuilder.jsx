@@ -183,20 +183,21 @@ export default class FormBuilder extends Component {
     Promise.all(fileParsePromises).then(() => self.processForms(formJsons));
   }
 
-  processForms(formJsons) {
+  async processForms(formJsons) {
     const formsValidationPromises = [];
     const self = this;
-    formJsons.forEach(form => {
+    for (const form of formJsons) {
       try {
-        const validateFormJson = self.validateFormJsonAndConcepts(form.fileName, form.formData);
+        const validateFormJson =
+            await self.validateFormJsonAndConcepts(form.fileName, form.formData);
         if (validateFormJson !== null) {
           formsValidationPromises.push(validateFormJson);
         }
       } catch (e) {
         this.updateImportErrors(form.fileName,
-          'Parse Error While Importing.. Please import a valid form');
+            'Parse Error While Importing.. Please import a valid form');
       }
-    });
+    }
     self.processFormValidationPromises(formsValidationPromises);
   }
 
