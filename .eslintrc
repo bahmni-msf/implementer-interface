@@ -13,8 +13,8 @@
     "get": true
   },
   "rules": {
-    "react/sort-prop-types": 1,
-    "react/jsx-sort-props": 1,
+    "react/sort-prop-types": 2,
+    "react/jsx-sort-props": 2,
     "react/sort-comp": 1,
     "no-unused-vars": 1,
     "max-len": 1,
@@ -23,5 +23,8 @@
     "eqeqeq": 1,
     "prefer-const": 1,
     "no-empty": 1
+  },
+  "parserOptions": {
+    "ecmaVersion": 8
   }
 }
