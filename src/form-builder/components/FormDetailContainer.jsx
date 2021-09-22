@@ -70,8 +70,12 @@ export class FormDetailContainer extends Component {
                 JSON.parse(data.resources[0].value) : {};
               this.setState({ formData: data, httpReceived: true,
                 loading: false, originalFormName: data.name,
-                referenceVersion: parsedFormValue.referenceVersion,
-                referenceFormUuid: parsedFormValue.referenceFormUuid });
+                // eslint-disable-next-line eqeqeq
+                referenceVersion: data.version == 1 ?
+                    0 : parsedFormValue.referenceVersion,
+                // eslint-disable-next-line eqeqeq
+                referenceFormUuid: data.version == 1 ?
+                    data.uuid : parsedFormValue.referenceFormUuid });
               const formControlsArray = formHelper.getObsControlEvents(parsedFormValue);
               this.props.dispatch(formLoad(formControlsArray));
             })
