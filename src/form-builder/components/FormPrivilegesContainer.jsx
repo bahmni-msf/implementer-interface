@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AutoComplete } from 'bahmni-form-controls';
-import { formBuilderConstants as constants } from 'form-builder/constants';
 import { connect } from 'react-redux';
-import { selectSource, setChangedProperty } from 'form-builder/actions/control';
-import { httpInterceptor } from 'common/utils/httpInterceptor';
-import { commonConstants } from 'common/constants';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
-import filter from 'lodash/filter';
-import { useState } from 'react';
+import { setChangedProperty } from 'form-builder/actions/control';
 
 export class FormPrivilegesContainer extends Component {
   constructor(props) {
@@ -45,9 +38,7 @@ export class FormPrivilegesContainer extends Component {
 }
 
 FormPrivilegesContainer.propTypes = {
-  formPrivileges: PropTypes.Array,
   dispatch: PropTypes.func,
-  onEventLoad: PropTypes.func,
   eventProperty: PropTypes.string,
   formPrivilege: PropTypes.shape({
     uid: PropTypes.string.isRequired,
@@ -55,6 +46,8 @@ FormPrivilegesContainer.propTypes = {
     isEditable: PropTypes.bool,
     isViewable: PropTypes.bool,
   }),
+  formPrivileges: PropTypes.Array,
+  onEventLoad: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

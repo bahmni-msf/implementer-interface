@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx';
 import sinon from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
-import chai, { expect } from 'chai';
+import chai from 'chai';
 
 chai.use(chaiEnzyme());
 

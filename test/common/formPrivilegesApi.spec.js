@@ -5,7 +5,6 @@ import { httpInterceptor } from 'common/utils/httpInterceptor';
 import { formBuilderConstants } from 'form-builder/constants';
 import {
   saveFormPrivileges, getFormPrivileges,
-  getFormPrivilegesFromUuid,
 } from 'common/apis/formPrivilegesApi';
 import { UrlHelper } from 'form-builder/helpers/UrlHelper';
 

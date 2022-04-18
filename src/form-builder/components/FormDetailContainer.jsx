@@ -170,7 +170,8 @@ export class FormDetailContainer extends Component {
       const initialPrivileges = [];
       const formId = this.state.formData.id;
       const formVersion = this.state.formData.version;
-      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?`
+          + `formId=${formId}&formVersion=${formVersion}`;
       httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
         initialPrivilegesFromDB.forEach((privilege) => {
           initialPrivileges.push(privilege);
@@ -188,7 +189,8 @@ export class FormDetailContainer extends Component {
 
   _getFormPrivilegesFromDB(formId, formVersion) {
     const initialPrivileges = [];
-    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?`
+       + `formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
       initialPrivilegesFromDB.forEach((privilege, key) => {
         initialPrivileges.push(privilege);
@@ -197,7 +199,7 @@ export class FormDetailContainer extends Component {
     });
   }
   _saveFormPrivileges(formId, formVersion) {
-    let formVersionTemp = formVersion;
+    const formVersionTemp = formVersion;
     saveFormPrivileges(
       this._createReqObject(formId, formVersionTemp, this.state.formPrivileges)
     )
@@ -233,7 +235,8 @@ export class FormDetailContainer extends Component {
       const initialPrivileges = [];
       const formId = this.state.formData.id;
       const formVersion = this.state.formData.version;
-      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+      const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?`
+        + `formId=${formId}&formVersion=${formVersion}`;
       httpInterceptor.get(optionsUrl).then((initialPrivilegesFromDB) => {
         initialPrivilegesFromDB.forEach((privilege) => {
           initialPrivileges.push(privilege);
@@ -740,15 +743,15 @@ FormDetailContainer.propTypes = {
   defaultLocale: PropTypes.string,
   dispatch: PropTypes.func,
   formControlEvents: PropTypes.array,
-  formPrivileges: PropTypes.array,
   formDetails: PropTypes.shape({
     events: PropTypes.object,
   }),
+  formPrivileges: PropTypes.array,
   match: PropTypes.shape({
-    path: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
     isExact: PropTypes.bool.isRequired,
+    path: PropTypes.string.isRequired,
     params: PropTypes.object,
+    url: PropTypes.string.isRequired,
   }),
   routes: PropTypes.array,
   translations: PropTypes.object,

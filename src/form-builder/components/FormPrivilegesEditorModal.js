@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Popup from 'reactjs-popup';
 import PropTypes from 'prop-types';
-import CodeMirror from 'codemirror';
 import { JSHINT } from 'jshint';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/lib/codemirror.js';
@@ -14,11 +13,8 @@ import 'codemirror/addon/hint/show-hint.js';
 import 'codemirror/addon/hint/javascript-hint.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import FormPrivilegeTable from 'form-builder/components/FormPrivilegeTable.jsx';
-import _ from 'lodash';
 import RemoveControlEventConfirmation from
       'form-builder/components/RemoveControlEventConfirmation.jsx';
-import jsBeautifier from 'js-beautify';
-import { connect } from 'react-redux';
 window.JSHINT = JSHINT;
 
 export default class FormPrivilegesEditorModal extends Component {
@@ -76,15 +72,13 @@ export default class FormPrivilegesEditorModal extends Component {
          <div className="form-privileges-container" >
            <FormPrivilegeTable
              close={this.props.close}
+             formData={formData}
              formId={formId}
              formName={formName}
-             formUuid={ formUuid }
              formPrivileges={formPrivileges}
-             formData={formData}
-
+             formUuid={ formUuid }
            />
         </div>
-
       </div>
     );
   }
@@ -92,11 +86,11 @@ export default class FormPrivilegesEditorModal extends Component {
 
 FormPrivilegesEditorModal.propTypes = {
   close: PropTypes.func.isRequired,
+  formData: PropTypes.formData,
   formId: PropTypes.number,
   formName: PropTypes.string.isRequired,
-  formUuid: PropTypes.string.isRequired,
   formPrivileges: PropTypes.array,
-  formData: PropTypes.formData,
+  formUuid: PropTypes.string.isRequired,
 };
 function mapStateToProps(state) {
   return {
