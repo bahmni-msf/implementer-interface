@@ -1,11 +1,9 @@
-import sinon from 'sinon';
 import React from 'react';
 import chai from 'chai';
 import chaiEnzyme from 'chai-enzyme';
-import { httpInterceptor } from 'common/utils/httpInterceptor';
-import FormPrivilegesPreviewGrid from '../../../src/form-builder/components/FormPrivilegesPreviewGrid.jsx';
-import { mount, shallow } from 'enzyme';
-import { formBuilderConstants } from '../../../src/form-builder/constants';
+import FormPrivilegesPreviewGrid
+  from '../../../src/form-builder/components/FormPrivilegesPreviewGrid.jsx';
+import { mount } from 'enzyme';
 
 chai.use(chaiEnzyme());
 

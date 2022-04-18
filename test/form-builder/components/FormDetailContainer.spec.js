@@ -656,7 +656,9 @@ describe('FormDetailContainer', () => {
       formData.version = '2';
       const updatedForm = Object.assign({}, formData, { resources });
       httpInterceptor.get.restore();
-      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve([{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '2', form_privilege_id: 1, id: 1 }]));
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(
+          [{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '2', form_privilege_id: 1, id: 1 }]
+      ));
       const postStub = sinon.stub(httpInterceptor, 'post');
       postStub.onCall(0).returns(Promise.resolve({ form: formData }))
           .onCall(1).returns(Promise
@@ -688,7 +690,9 @@ describe('FormDetailContainer', () => {
           .bahmniSaveFormNameTranslateUrl('ref-uuid');
         sinon.assert.calledWith(httpInterceptor.get,
             '/openmrs/ws/rest/v1/bahmniie/form/getFormPrivileges?formId=1&formVersion=2');
-        sinon.assert.calledWith(postStub.withArgs('/openmrs/ws/rest/v1/bahmniie/form/saveFormPrivileges', [{ formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '2' }]));
+        sinon.assert.calledWith(postStub.withArgs('/openmrs/ws/rest/v1/bahmniie/form/saveFormPrivileges',
+            [{ formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '2' }]
+        ));
         sinon.assert.calledOnce(postStub.withArgs(formNameTranslateSaveUrl, formNameTranslations));
         sinon.assert.callOrder(
           postStub.withArgs(formBuilderConstants.saveTranslationsUrl,
@@ -710,7 +714,9 @@ describe('FormDetailContainer', () => {
       formData.version = '1';
       const updatedForm = Object.assign({}, formData, { resources });
       httpInterceptor.get.restore();
-      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve([{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '1', form_privilege_id: 1, id: 1 }]));
+      sinon.stub(httpInterceptor, 'get').callsFake(() => Promise.resolve(
+          [{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '1', form_privilege_id: 1, id: 1 }]
+      ));
       const postStub = sinon.stub(httpInterceptor, 'post');
       postStub.onFirstCall().returns(Promise.resolve({ form: formData }))
           .onSecondCall().returns(Promise
@@ -1004,7 +1010,9 @@ describe('FormDetailContainer', () => {
       sinon.stub(wrapper.find('FormDetailContainer').instance(), 'hasEmptyBlocks').returns(false);
       httpInterceptor.get.restore();
       const getStub = sinon.stub(httpInterceptor, 'get');
-      getStub.onFirstCall().returns(Promise.resolve([{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '1', form_privilege_id: 1, id: 1 }]));
+      getStub.onFirstCall().returns(Promise.resolve(
+          [{ uuid: 'uuid', formId: 1, privilegeName: 'test', editable: true, viewable: false, formVersion: '1', form_privilege_id: 1, id: 1 }]
+      ));
       const postStub = sinon.stub(httpInterceptor, 'post');
       postStub.callsFake(() => Promise.resolve(Object.assign({},
         formData, { version: '2', uuid: 'next-uuid' })));

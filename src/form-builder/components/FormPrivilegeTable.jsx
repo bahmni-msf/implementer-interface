@@ -1,20 +1,10 @@
 import React from 'react';
-import Popup from 'reactjs-popup';
-import { render } from 'react-dom';
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { AutoComplete } from 'bahmni-form-controls';
-import { connect } from 'react-redux';
-import { selectSource, setChangedProperty } from 'form-builder/actions/control';
 import { commonConstants } from 'common/constants';
-import filter from 'lodash/filter';
 import { httpInterceptor } from 'common/utils/httpInterceptor';
 import Select from 'react-select';
-import { UrlHelper } from 'form-builder/helpers/UrlHelper';
-import sortBy from 'lodash/sortBy';
 import { formBuilderConstants } from 'form-builder/constants';
-import RemoveControlEventConfirmation from
-      'form-builder/components/RemoveControlEventConfirmation.jsx';
 import { saveFormPrivileges } from 'common/apis/formPrivilegesApi';
 import NotificationContainer from 'common/Notification';
 export default class FormPrivilegeTable extends Component {
@@ -58,7 +48,7 @@ export default class FormPrivilegeTable extends Component {
     this.fetchFormPrivilegesFromProps();
   }
   fetchFormData() {
-    if ((this.props.formPrivileges == null) || (this.props.formPrivileges.length == 0)) {
+    if ((this.props.formPrivileges === null) || (this.props.formPrivileges.length === 0)) {
       this.fetchFormPrivilegesFromDB();
     }
     const params =
@@ -67,9 +57,6 @@ export default class FormPrivilegeTable extends Component {
     httpInterceptor
                     .get(`${formBuilderConstants.formUrl}/${this.props.formUuid}?${params}`)
                     .then((data) => {
-                      const parsedFormValue = data.resources.length > 0 ?
-                        JSON.parse(data.resources[0].value) : {};
-
                       this.setState({
                         formData: data,
                       });
@@ -81,21 +68,22 @@ export default class FormPrivilegeTable extends Component {
                     });
   }
   fetchPrivileges() {
-    let initialPrivileges = [];
     const queryParams = '?=';
     const optionsUrl = `${formBuilderConstants.formPrivilegeUrl}${queryParams}`;
     httpInterceptor.get(optionsUrl)
         .then((initialPrivileges) => {
-          this.setState({ availablePrivileges: this.arrangePrivileges(initialPrivileges.results), loading: false });
+          this.setState({
+            availablePrivileges: this.arrangePrivileges(initialPrivileges.results),
+            loading: false,
+          });
         });
   }
   fetchFormPrivilegesFromDB() {
-    let initialPrivilegesFromDB = [];
-    const queryParams = '?=';
     let initialPrivileges = [];
     const formId = this.props.formId;
     const formVersion = this.props.formData.version;
-    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?formId=${formId}&formVersion=${formVersion}`;
+    const optionsUrl = `${formBuilderConstants.getFormPrivilegesUrl}?`
+        + `formId=${formId}&formVersion=${formVersion}`;
     httpInterceptor.get(optionsUrl)
         .then((initialPrivilegesFromDB) => {
           initialPrivilegesFromDB.forEach((privilege, key) => {
@@ -105,7 +93,7 @@ export default class FormPrivilegeTable extends Component {
         });
   }
   fetchFormPrivilegesFromProps() {
-    if (this.props.formPrivileges == undefined) {
+    if (this.props.formPrivileges === undefined) {
       const formPrivileges = [{
         formId: this.props.formId,
         privilegeName: '',
@@ -131,15 +119,10 @@ export default class FormPrivilegeTable extends Component {
 
   handleTag(event, idx) {
     const formPrivileges = this.state.formPrivileges.slice();
-    const availablePrivileges = this.state.availablePrivileges.slice();
-    const tempItem = {
-      formId: this.state.formData.id,
-      privilegeName: event.display,
-      editable: false,
-      viewable: false,
-    };
 
-    if (event.event != undefined && (formPrivileges.length > 0) && (event.event.currentTarget.type === 'checkbox')) {
+    if (event.event !== undefined &&
+        (formPrivileges.length > 0) &&
+        (event.event.currentTarget.type === 'checkbox')) {
       if (event.event.currentTarget.name === 'isEditable') {
         formPrivileges[event.idx].editable = event.event.currentTarget.checked;
       }
@@ -147,7 +130,7 @@ export default class FormPrivilegeTable extends Component {
         formPrivileges[event.idx].viewable = event.event.currentTarget.checked;
       }
     }
-    if (event != undefined && (event.event == undefined)) {
+    if (event !== undefined && (event.event === undefined)) {
       formPrivileges[idx].privilegeName = event.value;
       formPrivileges[idx].formId = this.state.formData.id;
       this.setState({ selectedPrivilegeOption: event.value });
@@ -172,7 +155,7 @@ export default class FormPrivilegeTable extends Component {
     this.setState({ formPrivileges });
   }
   getValue(privilege) {
-    if (privilege != undefined && privilege.privilegeName == '') {
+    if (privilege !== undefined && privilege.privilegeName === '') {
       const selectedPrivilegeOption = 'Select a privilege';
       return (selectedPrivilegeOption);
     } return privilege.privilegeName;
@@ -180,13 +163,7 @@ export default class FormPrivilegeTable extends Component {
   formSave(formPrivileges) {
     try {
       const formJson = this.getFormJson();
-      if (formJson != null) {
-        const formName = this.state.formData ? this.state.formData.name : 'FormName';
-        const formVersion = this.state.formData ? this.state.formData.version : 'FormVersion';
-        const formUuid = this.state.formData ? this.state.formData.uuid : undefined;
-        const formId = this.state.formData ? this.state.formData.id : undefined;
-        const formResourceUuid = this.state.formData && this.state.formData.resources.length > 0 ?
-                             this.state.formData.resources[0].uuid : '';
+      if (formJson !== null) {
         formJson.privilege = this.state.formPrivileges;
         this._saveFormPrivileges(this.state.formPrivileges);
       } else {
@@ -208,9 +185,9 @@ export default class FormPrivilegeTable extends Component {
     return null;
   }
   _saveFormPrivileges(formPrivileges) {
-    const self = this;
     saveFormPrivileges(this._createReqObject(this.state.formPrivileges)).then(() => {
-      const msg = 'Form Privileges saved successfully. Please save the form again before publishing';
+      const msg = 'Form Privileges saved successfully.'
+          + ' Please save the form again before publishing';
       const successNotification = {
         message: msg,
         type: commonConstants.responseType.success,
@@ -289,7 +266,7 @@ export default class FormPrivilegeTable extends Component {
     const { selectedPrivilegeOption } = this.state;
     const { availablePrivileges } = this.state;
     const options = availablePrivileges;
-    if (this.state.formPrivileges == undefined) {
+    if (this.state.formPrivileges === undefined) {
       const newPrivilegeItem = {
         formId: this.state.formData.id,
         privilegeName: '',
@@ -323,22 +300,22 @@ export default class FormPrivilegeTable extends Component {
                                </td>
                               <td>
                                     <input
-                                      type="checkbox"
-                                      name="isEditable"
-                                      defaultChecked={privilege.editable}
                                       checked={privilege.editable}
-                                      onClick ={(event) => this.handleTag({ event, idx })}
                                       className="form-control"
+                                      defaultChecked={privilege.editable}
+                                      name="isEditable"
+                                      onClick ={(event) => this.handleTag({ event, idx })}
+                                      type="checkbox"
                                     />
                                </td>
                                   <td>
                                       <input
-                                        type="checkbox"
-                                        name="isViewable"
                                         checked={privilege.viewable}
-                                        defaultChecked={privilege.viewable}
-                                        onClick={(event) => this.handleTag({ event, idx })}
                                         className="form-control"
+                                        defaultChecked={privilege.viewable}
+                                        name="isViewable"
+                                        onClick={(event) => this.handleTag({ event, idx })}
+                                        type="checkbox"
                                       />
                                    </td>
                               <td>
@@ -357,15 +334,23 @@ export default class FormPrivilegeTable extends Component {
                               <br />
                                 <br />
                                 <br />
-                              <button id="add-btn" onClick={this.handleAddRow} className="btn">
+                              <button className="btn" id="add-btn" onClick={this.handleAddRow}>
                                 Add Row
                               </button>
 
-                              <button className="button btn--highlight" onClick={() => this.formSave(this.state.formPrivileges)} type="submit">
+                              <button
+                                className="button btn--highlight"
+                                onClick={() => this.formSave(this.state.formPrivileges)}
+                                type="submit"
+                              >
                                 Save
                               </button>
                                <div>
-                                <button className="btn" onClick={this.props.close} type="reset"> Cancel </button>
+                                <button
+                                  className="btn"
+                                  onClick={this.props.close}
+                                  type="reset"
+                                > Cancel </button>
                                </div>
                    </div>
 
@@ -374,18 +359,18 @@ export default class FormPrivilegeTable extends Component {
   }
 }
 FormPrivilegeTable.propTypes = {
-  formPrivileges: PropTypes.array,
   formId: PropTypes.number,
+  formPrivileges: PropTypes.array,
 };
 FormPrivilegeTable.contextTypes = {
   router: PropTypes.object.isRequired,
 };
 function mapStateToProps(state) {
   return {
-    formDetails: state.formDetails,
-    formPrivileges: state.formPrivileges,
     formData: state.formData,
+    formDetails: state.formDetails,
     formId: state.formName,
     formName: state.formName,
+    formPrivileges: state.formPrivileges,
   };
 }
