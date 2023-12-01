@@ -643,6 +643,7 @@ babel-helper-explode-class@^6.24.1:
     babel-runtime "^6.22.0"
     babel-traverse "^6.24.1"
     babel-types "^6.24.1"
+
 babel-helper-function-name@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-helper-function-name/-/babel-helper-function-name-6.24.1.tgz#d3475b8c03ed98242a25b48351ab18399d3580a9"
@@ -697,6 +698,7 @@ babel-helper-remap-async-to-generator@^6.24.1:
     babel-template "^6.24.1"
     babel-traverse "^6.24.1"
     babel-types "^6.24.1"
+
 babel-helper-replace-supers@^6.24.1:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-helper-replace-supers/-/babel-helper-replace-supers-6.24.1.tgz#bf6dbfe43938d17369a213ca8a8bf74b6a90ab1a"
@@ -791,6 +793,11 @@ babel-plugin-syntax-flow@^6.18.0:
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-flow/-/babel-plugin-syntax-flow-6.18.0.tgz#4c3ab20a2af26aa20cd25995c398c4eb70310c8d"
   integrity sha1-TDqyCiryaqIM0lmVw5jE63AxDI0=
 
+babel-plugin-syntax-function-bind@^6.8.0:
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-function-bind/-/babel-plugin-syntax-function-bind-6.13.0.tgz#48c495f177bdf31a981e732f55adc0bdd2601f46"
+  integrity sha512-m8yMoh9LIiNyeLdQs5I9G+3YXo4nqVsKQkk7YplrG4qAFbNi9hkZlow8HDHxhH9QOVFPHmy8+03NzRCdyChIKw==
+
 babel-plugin-syntax-jsx@^6.3.13, babel-plugin-syntax-jsx@^6.8.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-jsx/-/babel-plugin-syntax-jsx-6.18.0.tgz#0af32a9a6e13ca7a3fd5069e62d7b0f58d0d8946"
@@ -861,6 +868,7 @@ babel-plugin-transform-do-expressions@^6.22.0:
   dependencies:
     babel-plugin-syntax-do-expressions "^6.8.0"
     babel-runtime "^6.22.0"
+
 babel-plugin-transform-es2015-arrow-functions@^6.22.0:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-es2015-arrow-functions/-/babel-plugin-transform-es2015-arrow-functions-6.22.0.tgz#452692cb711d5f79dc7f85e440ce41b9f244d221"
@@ -1051,6 +1059,23 @@ babel-plugin-transform-es2015-unicode-regex@^6.24.1:
     babel-runtime "^6.22.0"
     regexpu-core "^2.0.0"
 
+babel-plugin-transform-exponentiation-operator@^6.24.1:
+  version "6.24.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-exponentiation-operator/-/babel-plugin-transform-exponentiation-operator-6.24.1.tgz#2ab0c9c7f3098fa48907772bb813fe41e8de3a0e"
+  integrity sha512-LzXDmbMkklvNhprr20//RStKVcT8Cu+SQtX18eMHLhjHf2yFzwtQ0S2f0jQ+89rokoNdmwoSqYzAhq86FxlLSQ==
+  dependencies:
+    babel-helper-builder-binary-assignment-operator-visitor "^6.24.1"
+    babel-plugin-syntax-exponentiation-operator "^6.8.0"
+    babel-runtime "^6.22.0"
+
+babel-plugin-transform-export-extensions@^6.22.0:
+  version "6.22.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-export-extensions/-/babel-plugin-transform-export-extensions-6.22.0.tgz#53738b47e75e8218589eea946cbbd39109bbe653"
+  integrity sha512-mtzELzINaYqdVglyZrDDVwkcFRuE7s6QUFWXxwffKAHB/NkfbJ2NJSytugB43ytIC8UVt30Ereyx+7gNyTkDLg==
+  dependencies:
+    babel-plugin-syntax-export-extensions "^6.8.0"
+    babel-runtime "^6.22.0"
+
 babel-plugin-transform-flow-strip-types@^6.22.0:
   version "6.22.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-flow-strip-types/-/babel-plugin-transform-flow-strip-types-6.22.0.tgz#84cb672935d43714fdc32bce84568d87441cf7cf"
@@ -1058,6 +1083,22 @@ babel-plugin-transform-flow-strip-types@^6.22.0:
   dependencies:
     babel-plugin-syntax-flow "^6.18.0"
     babel-runtime "^6.22.0"
+
+babel-plugin-transform-function-bind@^6.22.0:
+  version "6.22.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-function-bind/-/babel-plugin-transform-function-bind-6.22.0.tgz#c6fb8e96ac296a310b8cf8ea401462407ddf6a97"
+  integrity sha512-9Ec4KYf1GurT39mlUjDSlN7HWSlB3u3mWRMogQbb+Y88lO0ZM3rJ0ADhPnQwWK9TbO6e/4E+Et1rrfGY9mFimA==
+  dependencies:
+    babel-plugin-syntax-function-bind "^6.8.0"
+    babel-runtime "^6.22.0"
+
+babel-plugin-transform-object-rest-spread@^6.22.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-object-rest-spread/-/babel-plugin-transform-object-rest-spread-6.26.0.tgz#0f36692d50fef6b7e2d4b3ac1478137a963b7b06"
+  integrity sha512-ocgA9VJvyxwt+qJB0ncxV8kb/CjfTcECUY4tQ5VT7nP6Aohzobm8CDFaQ5FHdvZQzLmf0sgDxB8iRXZXxwZcyA==
+  dependencies:
+    babel-plugin-syntax-object-rest-spread "^6.8.0"
+    babel-runtime "^6.26.0"
 
 babel-plugin-transform-react-display-name@^6.23.0:
   version "6.25.0"
@@ -1282,20 +1323,16 @@ backo2@1.0.2:
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
   integrity sha1-MasayLEpNjRj41s+u2n038+6eUc=
 
-bahmni-form-controls@^0.93.4:
-  version "0.93.4"
-  resolved "https://registry.yarnpkg.com/bahmni-form-controls/-/bahmni-form-controls-0.93.4.tgz#7c2ad24982225d6923b595a124ed4c8d43711fce"
-  integrity sha512-ht8ILIOtXd8Yx63fqCFYupdh/5umBZR1bzLnIiqw4eRTz0KZfdvqz3FgvjuvSU8Vp6taA1aAjyml/bEeOkANtQ==
-bahmni-form-controls-msf@^0.93.2:
-  version "0.93.3"
-  resolved "https://registry.npmjs.org/bahmni-form-controls-msf/-/bahmni-form-controls-msf-0.93.3.tgz"
-  integrity sha512-zkWBN/OjeWNRdcIhcXzy2BIEPnGidBgS752P5eB3GunLQi4jpDH7+ulU7CcAGKZwYA7GmvhdchiZh9WCOA4GmQ==
+bahmni-form-controls-msf@^0.93.10:
+  version "0.93.10"
+  resolved "https://registry.yarnpkg.com/bahmni-form-controls-msf/-/bahmni-form-controls-msf-0.93.10.tgz#6094716b0ffa24d3a74787a31fb12c5bdd7abc73"
+  integrity sha512-TuJ2g8TSooa0PaV+JYyVhvLd/At6xO+hCm0gbvBADMzOajpTLXVXJ6+w8x0xIlhTjp0gjAtKDuHR+vWqsowY3A==
   dependencies:
     base64-inline-loader "^1.1.0"
     classnames "^2.2.5"
     enzyme-adapter-react-16 "^1.1.0"
     immutable "3.8.1"
-    lodash "^4.17.4"
+    lodash "4.17.12"
     prop-types "^15.6.2"
     react-intl "^3.12.0"
     react-select "^1.0.0-rc.2"
@@ -5763,7 +5800,7 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
-lodash@^3.8.0, lodash@^4.0.0, lodash@^4.1.0, lodash@^4.15.0, lodash@^4.17.0, lodash@^4.17.12, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.3.0, lodash@^4.5.0, lodash@~4.17.11, lodash@~4.17.12:
+lodash@4.17.12, lodash@^3.8.0, lodash@^4.0.0, lodash@^4.1.0, lodash@^4.15.0, lodash@^4.17.0, lodash@^4.17.12, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.3.0, lodash@^4.5.0, lodash@~4.17.11, lodash@~4.17.12:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -7967,6 +8004,11 @@ regenerate@^1.2.1, regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
   integrity sha512-1G6jJVDWrt0rK99kBjvEtziZNCICAuvIPkSiUFIQxVP06RCVpq3dmDo2oi6ABpYaDYaTRr67BEhL8r1wgEZZKg==
+
+regenerator-runtime@^0.10.5:
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
+  integrity sha512-02YopEIhAgiBHWeoTiA8aitHDt8z6w+rQqNuIftlM+ZtvSl/brTouaU7DW6GO/cHtvxJvS4Hwv2ibKdxIRi24w==
 
 regenerator-runtime@^0.11.0:
   version "0.11.1"
