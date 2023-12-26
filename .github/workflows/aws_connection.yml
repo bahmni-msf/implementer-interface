@@ -32,9 +32,9 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh-add private_key
-          ssh -vvvJ ${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
+          ssh -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
           ls -al
-          ' -v
+          '
 
       - name: Remove Github Actions IP from security group
         run: |
