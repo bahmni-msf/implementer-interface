@@ -40,6 +40,7 @@ jobs:
               User ubuntu
               IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key
               ProxyCommand ssh -q -W %h:%p bahmniJumpServer
+              StrictHostKeyChecking no
           END
           cat ~/.ssh/config
       - name: Build & Deploy
