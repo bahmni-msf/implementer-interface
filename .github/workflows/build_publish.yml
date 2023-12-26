@@ -1,8 +1,8 @@
 name: Build and Publish
 on:
-  push:
+  # push:
     # branches:
-    #   - githubActions
+      # - githubActions
   workflow_dispatch:
 
 jobs:
