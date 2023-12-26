@@ -26,9 +26,19 @@ jobs:
       - name: add ssh 
         run: |
           echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
-          ls -al ~/.ssh/
-          cat ~/.ssh/config
-
+          mkdir ~/.ssh/
+          cat >>~/.ssh/config <<END
+          Host bahmniJumpServer
+              User ec2-user
+              HostName 13.232.240.173
+              IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key
+          Host instance
+              HostName $EC2_IP
+              Port 22
+              User ubuntu
+              IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key
+              ProxyCommand ssh -q -W %h:%p bahmniJumpServer
+          END
       - name: Build & Deploy
         env:
           PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
