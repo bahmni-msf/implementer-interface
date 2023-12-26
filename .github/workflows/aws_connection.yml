@@ -22,6 +22,12 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.BAHMNI_LITE_AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+      - name: ssh auth
+        env:
+          EC2_IP: ${{secrets.EC2_MALAWI_IP}}
+        run: |
+          mkdir ~/.ssh
+          echo "${EC2_IP} ecdsa-sha2-nistp256 AAAAE2V...=" >> ~/.ssh/known_hosts
 
       - name: Build & Deploy
         env:
