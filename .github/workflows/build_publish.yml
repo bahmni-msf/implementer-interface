@@ -10,7 +10,8 @@ jobs:
     name: Docker Build & Publish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Pull Github code
+        uses: actions/checkout@v4
       - name: Set env.ARTIFACT_VERSION
         run: |
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
@@ -42,4 +43,5 @@ jobs:
           IMAGE_TAG: ${{ env.ARTIFACT_VERSION }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f package/docker/Dockerfile .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
