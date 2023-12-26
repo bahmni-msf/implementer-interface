@@ -32,8 +32,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           echo $USER_NAME
-          ssh-add private_key
-          ssh -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
+          ssh -i private_key -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
           ls -al
           '
 
