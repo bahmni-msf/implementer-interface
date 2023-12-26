@@ -2,7 +2,7 @@ name: Build and Publish
 on:
   push:
     branches:
-      - ocp-dev-bahmni-lite
+      - githubActions
 
   workflow_dispatch:
 
