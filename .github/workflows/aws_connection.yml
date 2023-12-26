@@ -31,8 +31,8 @@ jobs:
             EC2_IP: ${{secrets.EC2_MALAWI_IP}}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh-add -k private_key
-          ssh -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
+          ssh-add private_key
+          ssh -vvvJ ${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
           ls -al
           ' -v
 
