@@ -31,6 +31,8 @@ jobs:
         run: yarn test
       - name: Package
         run: yarn ci
+      - name: Build docker image
+        run: docker build -t implementer-interface:latest -f package/docker/Dockerfile .
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -46,7 +48,7 @@ jobs:
           REPOSITORY: bahmni-msf-lite/implementer-interface
           IMAGE_TAG: ${{ env.ARTIFACT_VERSION }}
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f package/docker/Dockerfile .
-          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+          docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:latest
+          docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:latest
