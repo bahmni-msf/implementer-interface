@@ -38,7 +38,7 @@ jobs:
               IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key.pem
               ProxyCommand ssh -q -W %h:%p bahmniJumpServer
           END
-          cat ~/.ssh/config
+
       - name: Build & Deploy
         env:
           PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
