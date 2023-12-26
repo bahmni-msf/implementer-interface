@@ -10,6 +10,10 @@ jobs:
     name: Docker Build & Publish
     runs-on: ubuntu-latest
     steps:
+      - name: show
+        run: |
+          echo $GITHUB_RUN_NUMBER
+          echo $GITHUB_REF_NAME
       - name: Pull Github code
         uses: actions/checkout@v4
       - name: Set env.ARTIFACT_VERSION
