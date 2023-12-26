@@ -23,6 +23,22 @@ jobs:
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.BAHMNI_LITE_AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
+      - name: add ssh 
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
+          cat >>~/.ssh/config <<END
+          Host bahmniJumpServer
+              User ec2-user
+              HostName 13.232.240.173
+              IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key.pem
+          Host instance
+              HostName $EC2_IP
+              Port 22
+              User ubuntu
+              IdentityFile /home/runner/work/implementer-interface/implementer-interface/private_key.pem
+              ProxyCommand ssh -q -W %h:%p bahmniJumpServer
+          END
+          cat ~/.ssh/config
       - name: Build & Deploy
         env:
           PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
@@ -31,7 +47,6 @@ jobs:
           EC2_IP: ${{secrets.EC2_MALAWI_IP}}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          pwd private_key
           ssh -i private_key -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
           ls -al
           '
