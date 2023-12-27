@@ -43,6 +43,7 @@ jobs:
               StrictHostKeyChecking no
           END
           cat ~/.ssh/config
+          cat ~/private_key.pem
       - name: Build & Deploy
         env:
           PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
