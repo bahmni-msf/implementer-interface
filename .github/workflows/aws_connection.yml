@@ -51,7 +51,9 @@ jobs:
           HOSTNAME: ${{secrets.BAHMNI_LITE_AWS_SSH_HOST}}
           USER_NAME: ${{secrets.BAHMNI_LITE_AWS_SSH_USER_NAME}}
         run: |
-          ssh instance '
+          cat ~/.ssh/config
+          cat ~/private_key.pem
+          ssh -G instance '
           ls -al
           '
       - name: Remove Github Actions IP from security group
