@@ -31,7 +31,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 400 ~/private_key.pem
           ssh -A -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
-          ssh ubuntu@10.0.1.154 "
+          echo ${{secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY}} > ~/private_key.pem && chmod 400 ~/private_key.pem
+          ssh -i ~/private_key.pem ubuntu@10.0.1.154 "
           ls -al
           touch test.txt
           "
