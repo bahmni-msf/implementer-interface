@@ -25,8 +25,9 @@ jobs:
       - name: add ssh 
         env:
           EC2_IP: ${{secrets.EC2_MALAWI_IP}}
+          PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
         run: |
-          echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
+          echo $PRIVATE_KEY > ~/private_key.pem && chmod 600 ~/private_key.pem
           mkdir ~/.ssh/
           cat >>~/.ssh/config <<END
           Host bahmniJumpServer
