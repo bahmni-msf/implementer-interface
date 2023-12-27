@@ -1,5 +1,4 @@
-name: Deploy to prod
-
+name: Deployment (Container)
 on: workflow_dispatch
 
 jobs:
