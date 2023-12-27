@@ -32,7 +32,7 @@ jobs:
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
           ssh -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
-          ssh -i ~/private_key.pem -o StrictHostKeyChecking=no ubuntu@10.0.1.154
+          ssh -tt -i ~/private_key.pem -o StrictHostKeyChecking=no ubuntu@10.0.1.154
           ls -al
           '
       - name: Remove Github Actions IP from security group
