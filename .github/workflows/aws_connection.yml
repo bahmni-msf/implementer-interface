@@ -31,17 +31,17 @@ jobs:
           mkdir ~/.ssh/
           cat >>~/.ssh/config <<END
           Host bahmniJumpServer
-              User ec2-user
-              HostName 13.232.240.173
-              IdentityFile ~/private_key.pem
-              StrictHostKeyChecking no
+            User ec2-user
+            HostName 13.232.240.173
+            IdentityFile ~/private_key.pem
+            StrictHostKeyChecking no
           Host instance
-              HostName $EC2_IP
-              Port 22
-              User ubuntu
-              IdentityFile ~/private_key.pem
-              ProxyCommand ssh -q -W %h:%p bahmniJumpServer
-              StrictHostKeyChecking no
+            HostName $EC2_IP
+            Port 22
+            User ubuntu
+            IdentityFile ~/private_key.pem
+            ProxyCommand ssh -q -W %h:%p bahmniJumpServer
+            StrictHostKeyChecking no
           END
           cat ~/.ssh/config
           cat ~/private_key.pem
