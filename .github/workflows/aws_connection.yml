@@ -30,7 +30,7 @@ jobs:
           EC2_IP: ${{secrets.EC2_MALAWI_IP}}
         run: |
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
-          ssh-add -k ~/private_key.pem
+          ssh-add ~/private_key.pem
           ssh -A -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
           ssh -tt ubuntu@10.0.1.154
           ls -al
