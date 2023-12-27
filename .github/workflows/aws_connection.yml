@@ -22,40 +22,28 @@ jobs:
       - name: Add Github Actions IP to Security group
         run: |
           aws ec2 authorize-security-group-ingress --group-id ${{ secrets.BAHMNI_LITE_AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
-      - name: add ssh 
+      - name: ssh auth
         env:
           EC2_IP: ${{secrets.EC2_MALAWI_IP}}
-          PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
         run: |
-          echo $PRIVATE_KEY > ~/private_key.pem && chmod 600 ~/private_key.pem
-          mkdir ~/.ssh/
-          cat >>~/.ssh/config <<END
-          Host bahmniJumpServer
-            User ec2-user
-            HostName 13.232.240.173
-            IdentityFile ~/private_key.pem
-            StrictHostKeyChecking no
-          Host instance
-            HostName $EC2_IP
-            Port 22
-            User ubuntu
-            IdentityFile ~/private_key.pem
-            ProxyCommand ssh -q -W %h:%p bahmniJumpServer
-            StrictHostKeyChecking no
-          END
-          cat ~/.ssh/config
-          cat ~/private_key.pem
+          mkdir ~/.ssh
+          echo "${EC2_IP} ecdsa-sha2-nistp256 AAAAE2V...=" >> ~/.ssh/known_hosts
+
       - name: Build & Deploy
         env:
           PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_SSH_PRIVATE_KEY }}
           HOSTNAME: ${{secrets.BAHMNI_LITE_AWS_SSH_HOST}}
           USER_NAME: ${{secrets.BAHMNI_LITE_AWS_SSH_USER_NAME}}
+          EC2_IP: ${{secrets.EC2_MALAWI_IP}}
         run: |
-          cat ~/.ssh/config
-          cat ~/private_key.pem
-          ssh -G instance '
+          echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
+          ssh -T -i ~/private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ubuntu@${EC2_IP} '
           ls -al
           '
+          ssh -i ~/private_key.pem -o StrictHostKeyChecking=no -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
+          ls -al
+          '
+
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-id ${{ secrets.BAHMNI_LITE_AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
