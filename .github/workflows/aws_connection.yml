@@ -30,8 +30,9 @@ jobs:
           EC2_IP: ${{secrets.EC2_MALAWI_IP}}
         run: |
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
-          ssh -T -i ~/private_key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${USER_NAME}@${HOSTNAME}
+          ssh -T -i ~/private_key.pem -o StrictHostKeyChecking=no -o ProxyJump=${USER_NAME}@${HOSTNAME} ubuntu@${EC2_IP} '
           ls -al
+          '
 
       - name: Remove Github Actions IP from security group
         run: |
