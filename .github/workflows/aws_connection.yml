@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
           ssh -A -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
-          echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 600 ~/private_key.pem
+          echo $PRIVATE_KEY > ~/private_key.pem && chmod 600 ~/private_key.pem
           ssh -tt -i ~/private_key.pem -o StrictHostKeyChecking=no ubuntu@10.0.1.154
           ls -al
           '
