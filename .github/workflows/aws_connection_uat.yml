@@ -21,3 +21,15 @@ jobs:
           config_file: .github/workflows/client.ovpn
           username: ${{ secrets.UAT_OVPN_USERNAME }}
           password: ${{ secrets.UAT_OVPN_PASSWORD }}
+      - name: Deploy
+        env:
+          PRIVATE_KEY: ${{ secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY }}
+          USER_NAME: ${{secrets.BAHMNI_LITE_AWS_UAT_MALAWI_SSH_USER_NAME}}
+          HOSTNAME: ${{secrets.BAHMNI_LITE_AWS_UAT_MALAWI_SSH_HOST}}
+        run: |
+          echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 400 ~/private_key.pem
+          ssh -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
+          ls -al
+          "
+          rm ~/private_key.pem
+          '
