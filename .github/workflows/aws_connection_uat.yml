@@ -12,12 +12,7 @@ jobs:
       - name: Add pem file and openVpn ovpn
         run: |
           echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
-          echo "${{secrets.UAT_OVPN_FILE}}" > /home/runner/work/implementer-interface/implementer-interface/open_vpn.ovpn
-      - name: show
-        run: |
-          ls -al ~
-          ls -al 
-          pwd ~
+          echo "${{ secrets.UAT_OVPN_FILE }}" > "$(pwd)/client.ovpn"
       - name: Install OpenVPN
         run: |
           sudo apt update
@@ -25,7 +20,7 @@ jobs:
       - name: Connect to VPN
         uses: "kota65535/github-openvpn-connect-action@v2"
         with:
-          config_file: open_vpn.ovpn
+          config_file: client.ovpn
           username: ${{ secrets.UAT_OVPN_USERNAME }}
           password: ${{ secrets.UAT_OVPN_PASSWORD }}
       - name: Deploy
