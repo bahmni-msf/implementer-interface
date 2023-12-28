@@ -17,20 +17,15 @@ jobs:
         env:
           OPENVPN_CONFIG: ${{ secrets.UAT_OVPN_FILE }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y openvpn
-          echo "${{ secrets.UAT_OVPN_USERNAME }}  ${{ secrets.UAT_OVPN_PASSWORD }}"
-          echo "$OPENVPN_CONFIG" | sudo tee /etc/openvpn/client.conf > /dev/null
-          echo "${{ secrets.UAT_OVPN_USERNAME }}" | sudo tee -a /etc/openvpn/client.conf > /dev/null
-          echo "${{ secrets.UAT_OVPN_PASSWORD }}" | sudo tee -a /etc/openvpn/client.conf > /dev/null
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+          echo "$OPENVPN_CONFIG" > vpn-config.ovpn
+          echo "${{ secrets.UAT_OVPN_USERNAME }}" > vpn-credentials.txt
+          echo "${{ secrets.UAT_OVPN_PASSWORD }}" >> vpn-credentials.txt
           cat /etc/openvpn/client.conf
-          
-      - name: Start OpenVPN Connection
-        run: sudo openvpn --config /etc/openvpn/client.conf --daemon
+          sudo openvpn --config vpn-config.ovpn --auth-user-pass vpn-credentials.txt --daemon
+          sleep 60
 
-      - name: Sleep to Allow VPN Connection
-        run: sleep 60
-      
       - name: Deploy
         env:
           USER_NAME: ${{secrets.BAHMNI_LITE_AWS_UAT_MALAWI_SSH_USER_NAME}}
