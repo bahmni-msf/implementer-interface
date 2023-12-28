@@ -22,7 +22,9 @@ jobs:
 
       - name: Start OpenVPN Connection
         run: sudo openvpn --config /etc/openvpn/client.conf --daemon
-        background: true
+
+      - name: Sleep to Allow VPN Connection
+        run: sleep 60
       
       - name: Deploy
         env:
