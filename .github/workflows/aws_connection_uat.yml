@@ -9,21 +9,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Add pem file and openVpn ovpn file
+      - name: Add pem file
         run: |
           echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
 
-      - name: Set Up OpenVPN
+      - name: Set Up and Start OpenVPN
         env:
           OPENVPN_CONFIG: ${{ secrets.UAT_OVPN_FILE }}
+          OPENVPN_USERNAME: ${{ secrets.UAT_OVPN_USERNAME }}
+          OPENVPN_PASSWORD: ${{ secrets.UAT_OVPN_PASSWORD }}
         run: |
           sudo apt update
           sudo apt install -y openvpn openvpn-systemd-resolved
           echo "$OPENVPN_CONFIG" > vpn-config.ovpn
-          echo "${{ secrets.UAT_OVPN_USERNAME }}" > vpn-credentials.txt
-          echo "${{ secrets.UAT_OVPN_PASSWORD }}" >> vpn-credentials.txt
+          echo "$OPENVPN_USERNAME" > vpn-credentials.txt
+          echo "$OPENVPN_PASSWORD" >> vpn-credentials.txt
           sudo openvpn --config vpn-config.ovpn --auth-user-pass vpn-credentials.txt --daemon
-          sleep 60
+          sleep 15
 
       - name: Deploy
         env:
@@ -33,3 +35,8 @@ jobs:
           ssh -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
           ls -al
           '
+        
+      - name: Kill VPN connection
+        if: always()
+        run: |
+          sudo killall openvpn
