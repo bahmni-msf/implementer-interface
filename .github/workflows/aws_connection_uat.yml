@@ -30,6 +30,5 @@ jobs:
           echo "$PRIVATE_KEY" > ~/private_key.pem && chmod 400 ~/private_key.pem
           ssh -i ~/private_key.pem -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
           ls -al
-          "
           rm ~/private_key.pem
           '
