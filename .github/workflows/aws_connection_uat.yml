@@ -12,7 +12,7 @@ jobs:
       - name: Add pem file and openVpn ovpn
         run: |
           echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
-          echo "${{secrets.UAT_OVPN_FILE}}" > /home/runner/work/implementer-interface/implementer-interface/open_vpn.ovpn && chmod 400 /home/runner/work/implementer-interface/implementer-interface/open_vpn.ovpn
+          echo "${{secrets.UAT_OVPN_FILE}}" > /home/runner/work/implementer-interface/implementer-interface/open_vpn.ovpn
       - name: show
         run: |
           ls -al ~
