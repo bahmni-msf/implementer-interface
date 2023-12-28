@@ -1,0 +1,21 @@
+name: Deploy to qa
+on:
+  push:
+    branches:
+      - githubActions
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install OpenVPN
+        run: |
+          sudo apt update
+          sudo apt install -y openvpn openvpn-systemd-resolved
+      - name: Connect to VPN
+        uses: "kota65535/github-openvpn-connect-action@v2"
+        with:
+          config_file: .github/workflows/client.ovpn
+          username: ${{ secrets.UAT_OVPN_USERNAME }}
+          password: ${{ secrets.UAT_OVPN_PASSWORD }}
