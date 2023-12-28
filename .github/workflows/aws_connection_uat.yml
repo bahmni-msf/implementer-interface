@@ -17,7 +17,7 @@ jobs:
           sudo apt-get install -y openvpn
           echo "$OPENVPN_CREDENTIALS"
           echo "$OPENVPN_CONFIG" | sudo tee /etc/openvpn/client.conf > /dev/null
-          echo "${{ secrets.UAT_OVPN_USERNAME }}\n${{ secrets.UAT_OVPN_PASSWORD }}" | sudo tee -a /etc/openvpn/client.conf > /dev/null
+          echo "${{ secrets.UAT_OVPN_USERNAME }}\\n${{ secrets.UAT_OVPN_PASSWORD }}" | sudo tee -a /etc/openvpn/client.conf > /dev/null
 
       - name: Start OpenVPN Connection
         run: sudo openvpn --config /etc/openvpn/client.conf --daemon
