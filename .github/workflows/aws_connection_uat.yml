@@ -22,7 +22,6 @@ jobs:
           echo "$OPENVPN_CONFIG" > vpn-config.ovpn
           echo "${{ secrets.UAT_OVPN_USERNAME }}" > vpn-credentials.txt
           echo "${{ secrets.UAT_OVPN_PASSWORD }}" >> vpn-credentials.txt
-          cat /etc/openvpn/client.conf
           sudo openvpn --config vpn-config.ovpn --auth-user-pass vpn-credentials.txt --daemon
           sleep 60
 
