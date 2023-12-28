@@ -17,6 +17,7 @@ jobs:
         run: |
           ls -al ~
           ls -al 
+          pwd ~
       - name: Install OpenVPN
         run: |
           sudo apt update
