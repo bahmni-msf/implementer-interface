@@ -9,7 +9,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Add pem file and openVpn ovpn
+      - name: Add pem file and openVpn ovpn file
         run: |
           echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
           echo "${{ secrets.UAT_OVPN_FILE }}" > "$(pwd)/client.ovpn"
