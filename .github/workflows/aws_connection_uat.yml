@@ -12,11 +12,9 @@ jobs:
       - name: Add pem file and openVpn ovpn
         run: |
           echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
-          echo "${{secrets.UAT_OVPN_FILE}}" > ~/client.ovpn
+          echo "${{secrets.UAT_OVPN_FILE}}" > ~/client.ovpn && chmod 400 ~/client.ovpn
       - name: show
-        run: |
-          cat ~/private_key.pem
-          cat ~/client.ovpn
+        run: ls -al ~
       - name: Install OpenVPN
         run: |
           sudo apt update
