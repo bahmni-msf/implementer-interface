@@ -9,20 +9,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Add pem file and openVpn ovpn file
+      - name: Set Up OpenVPN
+        env:
+          OPENVPN_CONFIG: ${{ secrets.UAT_OVPN_FILE }}
+          OPENVPN_CREDENTIALS: `${{ secrets.UAT_OVPN_USERNAME }}\n${{ secrets.UAT_OVPN_PASSWORD }}`
         run: |
-          echo "${{secrets.BAHMNI_LITE_AWS_UAT_SSH_PRIVATE_KEY}}" > ~/private_key.pem && chmod 400 ~/private_key.pem
-          echo "${{ secrets.UAT_OVPN_FILE }}" > "$(pwd)/client.ovpn"
-      - name: Install OpenVPN
-        run: |
-          sudo apt update
-          sudo apt install -y openvpn openvpn-systemd-resolved
-      - name: Connect to VPN
-        uses: "kota65535/github-openvpn-connect-action@v2"
-        with:
-          config_file: client.ovpn
-          username: ${{ secrets.UAT_OVPN_USERNAME }}
-          password: ${{ secrets.UAT_OVPN_PASSWORD }}
+          sudo apt-get update
+          sudo apt-get install -y openvpn
+          echo "$OPENVPN_CREDENTIALS"
+          echo "$OPENVPN_CONFIG" | sudo tee /etc/openvpn/client.conf > /dev/null
+          echo "$OPENVPN_CREDENTIALS" | sudo tee -a /etc/openvpn/client.conf > /dev/null
+
+      - name: Start OpenVPN Connection
+        run: sudo openvpn --config /etc/openvpn/client.conf --daemon
+        background: true
+      
       - name: Deploy
         env:
           USER_NAME: ${{secrets.BAHMNI_LITE_AWS_UAT_MALAWI_SSH_USER_NAME}}
