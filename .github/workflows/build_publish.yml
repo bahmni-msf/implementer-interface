@@ -1,8 +1,8 @@
 name: Build and Publish
 on:
   push:
-    branches:
-      - githubActions
+    # branches:
+    #   - githubActions
     tags:
       - 'msf-release-[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
