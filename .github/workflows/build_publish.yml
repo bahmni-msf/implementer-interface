@@ -18,11 +18,6 @@ jobs:
           echo $GITHUB_REF_NAME
       - name: Pull Github code
         uses: actions/checkout@v4
-      - name: Set env.ARTIFACT_VERSION
-        env: 
-          APP_VERSION: "$(cat package/.appversion)"
-        run: |
-          echo $APP_VERSION
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
@@ -53,11 +48,13 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Set Image tag varaible
+        run: echo "ARTIFACT_VERSION=$(cat package/.appversion)-$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: bahmni-msf-lite/implementer-interface
-          APP_VERSION: "$(cat package/.appversion)"
+          IMAGE_TAG: ${{ env.ARTIFACT_VERSION }}
         run: |
           echo $APP_VERSION
           docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:latest
