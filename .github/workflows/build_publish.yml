@@ -18,11 +18,11 @@ jobs:
           echo $GITHUB_REF_NAME
       - name: Pull Github code
         uses: actions/checkout@v4
-      # - name: Set env.ARTIFACT_VERSION
-      #   run: |
-      #     wget -q https://raw.githubusercontent.com/bahmni-msf/msf-utility-scripts/master/bahmni-lite/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
-      #     ./setArtifactVersion.sh
-      #     rm setArtifactVersion.sh
+      - name: Set env.ARTIFACT_VERSION
+        env: 
+          APP_VERSION: "$(cat package/.appversion)"
+        run: |
+          echo $APP_VERSION
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
@@ -57,8 +57,9 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: bahmni-msf-lite/implementer-interface
+          APP_VERSION: "$(cat package/.appversion)"
         run: |
-          IMAGE_TAG="$(cat package/.appversion)-$GITHUB_RUN_NUMBER"
+          echo $APP_VERSION
           docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:latest
           docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
