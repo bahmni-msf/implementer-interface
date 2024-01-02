@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Set env.ARTIFACT_VERSION
         run: |
-          wget -q https://raw.githubusercontent.com/bahmni-msf/msf-utility-scripts/master/bahmni-lite/artifact-version.sh && chmod +x setArtifactVersion.sh
+          wget -q https://raw.githubusercontent.com/bahmni-msf/msf-utility-scripts/master/bahmni-lite/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
           ./setArtifactVersion.sh
           rm setArtifactVersion.sh
       - name: Use Node.js 12
