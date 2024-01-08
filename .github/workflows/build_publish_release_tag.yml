@@ -50,6 +50,5 @@ jobs:
           REPOSITORY: bahmni-msf-lite/implementer-interface
           IMAGE_TAG: ${{ env.ARTIFACT_VERSION }}
         run: |
-          echo $APP_VERSION
           docker tag implementer-interface:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
