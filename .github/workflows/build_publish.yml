@@ -1,7 +1,8 @@
 name: Build and Publish
 on:
   push:
-    branches: [ocp-dev-bahmni-lite]
+    branches: 
+      - ocp-dev-bahmni-lite
   workflow_dispatch:
 
 jobs:
